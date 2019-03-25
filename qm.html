@@ -1,0 +1,774 @@
+<html title="QuoteMaker ">
+<head>
+	
+</head>
+
+<body>
+	Paste the lead here : 
+	<div contenteditable="true" id="divLeadText" class="editable"></div>
+	<br /><br />
+
+	<input type="button" title="generate" value="Generate" onclick="generate()">
+
+	<input type="button" title="generate" value="Clear Form" onclick="location.reload()">
+
+	<!DOCTYPE html>
+<html>
+
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+
+<body>
+
+
+<i class="fa fa-heart"></i>
+Mark Romano
+
+</body>
+</html>
+
+
+	<br /><br /><br /><br />
+	Generated output will be shown here : Moving Quote ** Early Booking Offer
+	<div contenteditable="true" id="generatedQuote" class="generatedEditable"></div>
+
+	<br /><br />
+
+</body>
+
+</html>
+
+
+
+<script type="text/javascript">
+
+		const scaleFee = 45;
+
+	var nameCodeMapping = {};
+	var bedRoomLbs = {};
+	var citySurcharges = {};
+
+	var xDinamikBedRoomCount = 1; // default degerimiz 1
+	var xDinamikBedRoomWeightsForText = '2000 to 2500';
+	var xDinamikBedRoomWeightForCalculation = 2000;
+	var xDinamikWeightCharges = 0;
+
+	var xDinamikCityOrigin = '';
+	var xDinamikCityDestination = '';
+
+	var xDinamikOriginCode = '';
+	var xDinamikDestinationCode = '';
+
+	var xDinamikCityOriginSurcharge = 0;
+	var xDinamikCityDestinationSurcharge = 0;
+	var xDinamikTotalAmount = 0;
+	var xDinamikFirst500LbsInt = 0;
+	var xDinamikFirst500LbsTxt = '';
+
+	var xDinamikWeightRateTxt = '0.5';
+	
+
+	function init(){
+		nameCodeMapping['Move Date:'] = 'xDinamikMoveDate';
+		nameCodeMapping['Type of Move:'] = 'xDinamikTypeOfMove';
+
+		nameCodeMapping['Move Size:'] = 'xDinamikMoveSize';
+		nameCodeMapping['Quote hauling vehicle?'] = 'xDinamikQuoteHaulingVehicle';
+		nameCodeMapping['Origin:'] = 'xDinamikOrigin';
+		nameCodeMapping['Destination:'] = 'xDinamikDestination';
+		nameCodeMapping['First Name:'] = 'xDinamikFirstName';
+		nameCodeMapping['Last Name:'] = 'xDinamikLastName';
+		nameCodeMapping['Phone:'] = 'xDinamikPhone';
+		nameCodeMapping['Phone2:'] = 'xDinamikPhone2';
+		nameCodeMapping['Email Address:'] = 'xDinamikEmailAddress';
+		nameCodeMapping['Contact Preference:'] = 'xDinamikContactPreferences';
+
+		// @bahadir bedRoomLbs degerlerini salliyorum. Sen dogrularini girersin.
+		bedRoomLbs[1] = new Object();
+		bedRoomLbs[1].Count = 1;
+		bedRoomLbs[1].WeightForCalculation = 2000;
+		bedRoomLbs[1].WeightsForText = '2000 to 2500';
+
+		bedRoomLbs[2] = new Object();
+		bedRoomLbs[2].Count = 2;
+		bedRoomLbs[2].WeightForCalculation = 3000;
+		bedRoomLbs[2].WeightsForText = '3000 to 5000';
+
+		bedRoomLbs[3] = new Object();
+		bedRoomLbs[3].Count = 2;
+		bedRoomLbs[3].WeightForCalculation = 4000;
+		bedRoomLbs[3].WeightsForText = '4000 to 5000';
+
+		bedRoomLbs[4] = new Object();
+		bedRoomLbs[4].Count = 2;
+		bedRoomLbs[4].WeightForCalculation = 8000;
+		bedRoomLbs[4].WeightsForText = '7000 to 9000';
+
+		bedRoomLbs[5] = new Object();
+		bedRoomLbs[5].Count = 2;
+		bedRoomLbs[5].WeightForCalculation = 10000;
+		bedRoomLbs[5].WeightsForText = '10000 to 12000';
+
+		// @bahadir
+		citySurcharges['Abbotsford'] = 100;
+		citySurcharges['Ancaster'] = 100;
+		citySurcharges['Aylmer'] = 200;
+		citySurcharges['Armstrong'] = 150;
+		citySurcharges['Barrie'] = 100;
+		citySurcharges['Baysville'] = 200;
+		citySurcharges['Barrhead'] = 150;
+		citySurcharges['Blairmore'] = 200;
+		citySurcharges['Burnaby'] = 0;
+		citySurcharges['Busby'] = 100;
+		citySurcharges['Boston'] = 250;
+		citySurcharges['Boyle'] = 175;
+		citySurcharges['Brampton'] = 0;
+		citySurcharges['Brantford'] = 150;
+		citySurcharges['Brossard'] = 75;
+		citySurcharges['Belle River'] = 350;
+		citySurcharges['Campbell River'] = 600;
+		citySurcharges['Cornwall'] = 75;
+		citySurcharges['Carignan'] = 100;
+		citySurcharges['Clarenville'] = 2000;
+		citySurcharges['Courtenay'] = 550;
+		citySurcharges['Camrose'] = 75;
+		citySurcharges['Clarence Creek'] = 50;
+		citySurcharges['Calgary'] = 0;
+		citySurcharges['Cambridge'] = 125;
+		citySurcharges['Chemainus'] = 475;
+		citySurcharges['Clearwater'] = 100;
+		citySurcharges['Chilliwack'] = 125;
+		citySurcharges['Castlegar'] = 450;
+		citySurcharges['Cranbrook'] = 450;
+		citySurcharges['Comox'] = 600;
+		citySurcharges['Coldstream'] = 45;
+		citySurcharges['Coquitlam'] = 0;
+		citySurcharges['Cochrane'] = 0;
+		citySurcharges['Courtney'] = 600;
+		citySurcharges['Chicago'] = 150;
+		citySurcharges['Duncan'] = 525;
+		citySurcharges['Dunster'] = 750;
+		citySurcharges['Dryden'] = 0;
+		citySurcharges['Delta'] = 0;
+		citySurcharges['Dawson Creek'] = 1100;
+		citySurcharges['Dorval'] = 100;
+		citySurcharges['Edmonton'] = 75;
+		citySurcharges['Edson'] = 250;
+		citySurcharges['Etobicoke'] = 0;
+		citySurcharges['Espanola'] = 200;
+		citySurcharges['East Broughton'] = 250;
+		citySurcharges['East York'] = 0;
+		citySurcharges['Elkwater'] = 300;
+		citySurcharges['Fernie'] = 450;
+		citySurcharges['Fort St John'] = 125;
+		citySurcharges['Fox Creek'] = 300;
+		citySurcharges['Fort Mcmurray'] = 850;
+		citySurcharges['Fort McMurray'] = 850;
+		citySurcharges['Fort Saskatchewan'] = 100;
+		citySurcharges['Fort Saint John'] = 125;
+		citySurcharges['Fresno'] = 150;
+		citySurcharges['Grand Prairie'] = 850;
+		citySurcharges['Grand Cache'] = 550;
+		citySurcharges['Glandale'] = 0;
+		citySurcharges['Gatineau'] = 50;
+		citySurcharges['Guelph'] = 100;
+		citySurcharges['High Prairie'] = 850;
+		citySurcharges['Halifax'] = 0;
+		citySurcharges['Hamilton'] = 75;
+		citySurcharges['Hinton'] = 125;
+		citySurcharges['High River'] = 0;
+		citySurcharges['Indian Wells'] = 150;
+		citySurcharges['Innisfil'] = 75;
+		citySurcharges['Kimberley'] = 450;
+		citySurcharges['Kaleden'] = 150;
+		citySurcharges['Kitchener'] = 100;
+		citySurcharges['Kitimat'] = 2500;
+		citySurcharges['Kelowna'] = 150;
+		citySurcharges['Kamloops'] = 0;
+		citySurcharges['Komoka'] = 200;
+		citySurcharges['Kingston'] = 75;
+		citySurcharges['Kapuskasing'] = 50;
+		citySurcharges['Ladysmith'] = 475;
+		citySurcharges['Les Cedres'] = 100;
+		citySurcharges['Lancaster Park'] = 0;
+		citySurcharges['Langley'] = 75;
+		citySurcharges['Leduc'] = 0;
+		citySurcharges['Lethbridge'] = 200;
+		citySurcharges['London'] = 200;
+		citySurcharges['Lister'] = 450;
+		citySurcharges['Maple Ridge'] = 75;
+		citySurcharges['Madden'] = 0;
+		citySurcharges['Markham'] = 0;
+		citySurcharges['Maple'] = 0;
+		citySurcharges['Morinville'] = 75;
+		citySurcharges['Mississauga'] = 0;
+		citySurcharges['Montreal-Nord'] = 95;
+		citySurcharges['Medicine Hat'] = 350;
+		citySurcharges['Montreal'] = 100;
+		citySurcharges['Mission'] = 100;
+		citySurcharges['Nanaimo'] = 475;
+		citySurcharges['Nepean'] = 75;
+		citySurcharges['Newmarket'] = 0;
+		citySurcharges['New York'] = 150;
+		citySurcharges['Markham'] = 0;
+		citySurcharges['Nelson'] = 450;
+		citySurcharges['North York'] = 150;
+		citySurcharges['North Bay'] = 350;
+		citySurcharges['New York'] = 200;
+		citySurcharges['Parksville'] = 500;
+		citySurcharges['Parry Sound'] = 225;
+		citySurcharges['Parkland'] = 75;
+		citySurcharges['Pemberton'] = 225;
+		citySurcharges['Peterborough'] = 150;
+		citySurcharges['Ponoka'] = 0;
+		citySurcharges['Pitt Meadows'] = 75;
+		citySurcharges['Port Alberni'] = 550;
+		citySurcharges['Peace River'] = 950;
+		citySurcharges['Port Hardy'] = 1250;
+		citySurcharges['Penticton'] = 200;
+		citySurcharges['Prince  Albert'] = 350;
+		citySurcharges['Prince George'] = 1250;
+		citySurcharges['Prince Rupert'] = 2500;
+		citySurcharges['Powell River'] = 950;
+		citySurcharges['Regina'] = 0;
+		citySurcharges['Redlands'] = 150;
+		citySurcharges['Richmond Hill'] = 0;
+		citySurcharges['Red Deer'] = 0;
+		citySurcharges['Saint-Luc'] = 100;
+		citySurcharges['Salman Arm'] = 0;
+		citySurcharges['Saint-Antoine-sur-Richelieu'] = 125;
+		citySurcharges['Sherwood Park'] = 50;
+		citySurcharges['San Jose'] = 100;
+		citySurcharges['San Diego'] = 200;
+		citySurcharges['Scarborough'] = 0;
+		citySurcharges['St. Albert'] = 0;
+		citySurcharges['Shawnigan Lake'] = 500;
+		citySurcharges['Squamish'] = 125;
+		citySurcharges['Santa Clara'] = 150;
+		citySurcharges['Surrey'] = 0;
+		citySurcharges['Sunnyvale'] = 0;
+		citySurcharges['Sudbury'] = 100;
+		citySurcharges['Stratford'] = 150;
+		citySurcharges['Sooke'] = 400;
+		citySurcharges['Saskatoon'] = 200;
+		citySurcharges['St Catharines'] = 150;
+		citySurcharges['San Francisco'] = 150;
+		citySurcharges['Sparwood'] = 300;
+		citySurcharges['Spruce Grove'] = 0;
+		citySurcharges['Thornhill'] = 0;
+		citySurcharges['Tillsonburg'] = 175;
+		citySurcharges['Oliver'] = 450;
+		citySurcharges['Okotoks'] = 150;
+		citySurcharges['Orillia'] = 125;
+		citySurcharges['Oceanside'] = 100;
+		citySurcharges['Osoyoos'] = 450;
+		citySurcharges['Orleans'] = 50;
+		citySurcharges['Ottawa'] = 75;
+		citySurcharges['Oakville'] = 0;
+		citySurcharges['Terrace'] = 2500;
+		citySurcharges['Totenham'] = 75;
+		citySurcharges['Trail'] = 450;
+		citySurcharges['Williams  Lake'] = 500;
+		citySurcharges['Windsor'] = 400;
+		citySurcharges['Whitby'] = 0;
+		citySurcharges['Waterloo'] = 125;
+		citySurcharges['Vernon'] = 100;
+		citySurcharges['Tofino'] = 950;
+		citySurcharges['Toronto'] = 0;
+		citySurcharges['Ucluelet'] = 950;
+		citySurcharges['Victoria'] = 475;
+		citySurcharges['Vaughan'] = 0;
+		citySurcharges['Vancouver'] = 0;
+		citySurcharges['Whistler'] = 225;
+		citySurcharges['Whitchurch-Stouffville'] = 0;
+		citySurcharges['Quesnel'] = 950;
+		citySurcharges['Quebec'] = 350;
+		citySurcharges['Qualicum Beach'] = 445;
+
+		
+
+
+
+		
+
+	}
+
+	function clearText(text){
+		return replaceAll(replaceAll(text,'\n','').trim(), '  ', ' ')
+	}
+
+
+	function parseLead() {
+
+		var leadParameters = new Array();
+
+		var divContent = document.getElementById('divLeadText');
+		var actualLead = divContent.children[0];
+		var tbody = actualLead.children[0];
+		var rows = tbody.children;
+
+		
+		for (var i = 0; i < rows.length; i++) {
+			var leadItem = new Object();
+
+			if (rows[i].children.length < 2) // Ilk satirda tek td var. Atla
+				continue;
+
+
+			leadItem.Name = clearText(rows[i].children[0].textContent);
+			leadItem.Value = clearText(rows[i].children[1].textContent);
+			leadItem.Code = codeForParameterName(leadItem.Name);
+			leadParameters.push(leadItem);
+
+			if (leadItem.Code === 'xDinamikMoveSize'){
+				parseBedroomCount(leadItem.Value);
+			}
+			if (leadItem.Code === 'xDinamikOrigin'){
+				parseCity(leadItem.Value, 'xDinamikOrigin');
+			}
+			if (leadItem.Code === 'xDinamikDestination'){
+				parseCity(leadItem.Value, 'xDinamikDestination');
+			}
+			
+		}
+		xDinamikWeightCharges *= getWeightRate(xDinamikOriginCode,xDinamikDestinationCode);
+
+		xDinamikTotalAmount = xDinamikFirst500LbsInt + xDinamikWeightCharges + xDinamikCityOriginSurcharge + xDinamikCityDestinationSurcharge + scaleFee;
+
+		return leadParameters;
+	}
+
+	function parseCity(cityText, type){
+		var splittedText = cityText.split(',');
+		if (splittedText.length < 2){			
+			return
+		}
+
+		if (type === 'xDinamikOrigin'){
+			xDinamikCityOrigin = splittedText[0];
+			xDinamikCityOriginSurcharge = citySurcharges[xDinamikCityOrigin];
+			xDinamikOriginCode = splittedText[1].trim().split(' ')[0]
+		}else{ // xDinamikDestination
+			xDinamikCityDestination = splittedText[0];
+			xDinamikCityDestinationSurcharge = citySurcharges[xDinamikCityDestination];
+			xDinamikDestinationCode = splittedText[1].trim().split(' ')[0]
+		}
+	}
+
+	function parseBedroomCount(bedRoomText){
+		if (bedRoomText.indexOf('Studio') > -1 ){
+			xDinamikBedRoomWeightsForText = '500 to 1000';
+			xDinamikBedRoomWeightForCalculation = '500 lbs - our minimum weight to move'; 
+			xDinamikWeightCharges = 0;
+			xDinamikFirst500LbsTxt = '$450.00'			
+			xDinamikFirst500LbsInt = 450;
+		}else{
+			var splittedText = bedRoomText.split('Bedroom');
+			if (splittedText.length < 2){
+				xDinamikBedRoomCount = 1;
+			}else{
+				xDinamikBedRoomCount = parseInt(splittedText[0]);
+			}
+			xDinamikBedRoomWeightsForText = bedRoomLbs[xDinamikBedRoomCount].WeightsForText;
+			xDinamikBedRoomWeightForCalculation = bedRoomLbs[xDinamikBedRoomCount].WeightForCalculation;
+			xDinamikWeightCharges = xDinamikBedRoomWeightForCalculation;
+		}
+
+	}
+
+	// @bahadir weightRate. Farklı wieght rate olmasını istediğin eşleşmeler varsa aşağıdaki if bloğundan kopyalayabilirsin.
+	function getWeightRate(from,to){
+		if (from === 'AB' && to === 'BC'){
+			xDinamikWeightRateTxt = '$0.40'
+			return 0.40;
+		}
+
+		xDinamikWeightRateTxt = '$0.50'
+		return 0.50;
+	}
+
+	function codeForParameterName(name){
+		
+		var code = nameCodeMapping[name];
+		if (code === void 0 || code === null ){
+			return 'ParameterNameNotFound'; // Burada hata da verdirilebilir. Lead değişirse patlamasın diye exception atmıyorum.
+		}
+
+		return code;		
+	}
+
+	function generate() {
+		init();
+		
+		var leadParametersArray = parseLead();
+
+		for (var i=0; i < leadParametersArray.length; i++){
+			statikMetin = replaceAll(statikMetin, leadParametersArray[i].Code, leadParametersArray[i].Value); //statikMetin.replace(leadParametersArray[i].Code,leadParametersArray[i].Value);
+		}
+
+		statikMetin = replaceAll(statikMetin, 'xDinamikBedRoomCount' , xDinamikBedRoomCount);
+		statikMetin = replaceAll(statikMetin, 'xDinamikBedRoomWeightsForText' , xDinamikBedRoomWeightsForText);
+		if (xDinamikFirst500LbsTxt === ''){			
+			statikMetin = replaceAll(statikMetin, 'xDinamikBedRoomWeightForCalculation' , xDinamikBedRoomWeightForCalculation + ' lbs:');
+		}
+		else{			
+			statikMetin = replaceAll(statikMetin, 'xDinamikBedRoomWeightForCalculation' , xDinamikBedRoomWeightForCalculation);
+		}
+
+		statikMetin = replaceAll(statikMetin, 'xDinamikWeightCharges' , xDinamikWeightCharges);
+
+		statikMetin = replaceAll(statikMetin, 'xDinamikCityOriginSurcharge' , xDinamikCityOriginSurcharge);
+		statikMetin = replaceAll(statikMetin, 'xDinamikCityDestinationSurcharge' , xDinamikCityDestinationSurcharge);
+
+		statikMetin = replaceAll(statikMetin, 'xDinamikTotalAmount' , xDinamikTotalAmount);
+
+		statikMetin = replaceAll(statikMetin, 'xDinamikFirst500LbsTxt' , xDinamikFirst500LbsTxt);
+
+		statikMetin = replaceAll(statikMetin, 'xDinamikWeightRateTxt' , xDinamikWeightRateTxt);
+		
+		
+		document.getElementById("generatedQuote").innerHTML = '';
+		document.getElementById("generatedQuote").innerHTML = statikMetin;
+		document.getElementById('divLeadText').setAttribute('contenteditable', 'false');
+	}
+
+	function replaceAll(str, find, replace) {
+		return str.replace(new RegExp(find, 'g'), replace);
+	}
+
+	
+	var statikMetin = `<html>
+<head>
+</head>
+<body>
+<br>
+<div dir="ltr"><div><br></div><div><p class="MsoNormal" style="margin:0in 0in 12pt;font-size:11pt;font-family:Calibri,sans-serif"></p>
+
+
+<a href="https://imgbb.com/"><img src="https://i.ibb.co/4pwLJJ3/vegaline.png" alt="vegaline" border="0" /></a><p class="MsoNormal" style="margin:0in 0in 0.0001pt;font-size:11pt;font-family:Calibri,sans-serif"><span lang="EN-CA"></span><span lang="EN-CA" style="font-family:Arial,sans-serif;color:black">
+<br>
+Hi xDinamikFirstName, </span><span lang="EN-CA"></span></p><p class="MsoNormal" style="margin:0in 0in 0.0001pt;font-size:11pt;font-family:Calibri,sans-serif"><span lang="EN-CA" style="font-family:Arial,sans-serif;color:black"> </span></p><p class="MsoNormal" style="margin:0in 0in 0.0001pt;font-size:11pt;font-family:Calibri,sans-serif"><span lang="EN-CA" style="font-family:Arial,sans-serif;color:black">Thank you for considering Vega Line for
+your moving needs. Below you will see a quote for the estimated cost of your
+move based on the information that you have provided us. Through our
+competitive pricing and years of experience, we strive to get you from A to B
+problem free.</span></p><p class="MsoNormal" style="margin:0in 0in 0.0001pt;font-size:11pt;font-family:Calibri,sans-serif"><span lang="EN-CA" style="font-family:Arial,sans-serif;color:black"> </span></p><p class="MsoNormal" style="margin:0in 0in 0.0001pt;font-size:11pt;font-family:Calibri,sans-serif"><span lang="EN-CA" style="font-family:Arial,sans-serif;color:black">Additionally, we offer the lowest rate
+possible! To support this claim, we will match any written estimate/quote
+that you may receive by another equally reputable moving company.</span></p><p class="MsoNormal" style="margin:0in 0in 0.0001pt;font-size:11pt;font-family:Calibri,sans-serif"><span lang="EN-CA" style="font-family:Arial,sans-serif;color:black"> </span><span lang="EN-CA" style="font-family:-webkit-standard,serif;color:black"></span></p><p class="MsoNormal" style="margin:0in 0in 0.0001pt;font-size:11pt;font-family:Calibri,sans-serif"><i><span lang="EN-CA" style="font-family:Arial,sans-serif;color:rgb(0,68,119)">—&gt;</span></i><b><span lang="EN-CA" style="font-size:13.5pt;font-family:Arial,sans-serif;color:rgb(0,68,119)"> THIS MONTH’S DEAL!:</span></b><i><span lang="EN-CA" style="font-family:Arial,sans-serif;color:black"> We
+are offering a discounted rate of</span></i><b><span lang="EN-CA" style="font-size:13.5pt;font-family:Arial,sans-serif;color:rgb(50,132,207)"> 35% OFF.</span></b><span lang="EN-CA" style="font-family:Arial,sans-serif;color:black"></span></p><p class="MsoNormal" style="margin:0in 0in 0.0001pt;font-size:11pt;font-family:Calibri,sans-serif"><span lang="EN-CA" style="font-family:Arial,sans-serif;color:black"> </span><span lang="EN-CA" style="font-family:-webkit-standard,serif;color:black"></span></p><p class="MsoNormal" style="margin:0in 0in 0.0001pt;font-size:11pt;font-family:Calibri,sans-serif"><span lang="EN-CA" style="font-family:Arial,sans-serif;color:black">Based on the information we have received,
+you reside in a <b>xDinamikBedRoomCount  bedroom Apartment</b>, which is approximately<b> xDinamikBedRoomWeightsForText </b>lbs. Please keep in mind that this average weight is according
+to moving industry standards.</span></p><p class="MsoNormal" style="margin:0in 0in 12pt;font-size:11pt;font-family:Calibri,sans-serif"><span lang="EN-CA" style="font-family:Arial,sans-serif;color:black"> </span></p><p class="MsoNormal" style="margin:0in 0in 12pt;font-size:11pt;font-family:Calibri,sans-serif"><span lang="EN-CA" style="font-family:Arial,sans-serif;color:black">Let
+me give you the estimated cost (35% discount applied) for<b> xDinamikBedRoomWeightForCalculation </b></span><span lang="EN-CA" style="font-family:-webkit-standard,serif;color:black"></span></p><table class="gmail-MsoNormalTable" border="0" cellspacing="0" cellpadding="0" width="682" style="width:511.5pt;margin-left:6pt;border-collapse:collapse">
+ <tbody><tr style="height:18.75pt">
+  <td width="199" valign="top" style="width:149.25pt;border-width:1pt 1pt 3pt;border-style:solid;border-color:black black rgb(79,129,189);background-image:initial;background-position:initial;background-size:initial;background-repeat:initial;background-origin:initial;background-clip:initial;padding:0in 6pt;height:18.75pt">
+  <p class="MsoNormal" align="center" style="text-align:center;margin:0in 0in 0.0001pt;font-size:11pt;font-family:Calibri,sans-serif"><b>DESCRIPTION</b><span style="font-family:&quot;Times New Roman&quot;,serif"></span></p>
+  </td>
+  <td width="273" valign="top" style="width:204.75pt;border-top:1pt solid black;border-left:none;border-bottom:3pt solid rgb(79,129,189);border-right:1pt solid black;background-image:initial;background-position:initial;background-size:initial;background-repeat:initial;background-origin:initial;background-clip:initial;padding:0in 6pt;height:18.75pt">
+  <p class="MsoNormal" align="center" style="text-align:center;margin:0in 0in 0.0001pt;font-size:11pt;font-family:Calibri,sans-serif"><b>DETAILS</b></p>
+  </td>
+  <td width="99" valign="top" style="width:74.25pt;border-top:1pt solid black;border-left:none;border-bottom:3pt solid rgb(79,129,189);border-right:1pt solid black;background-image:initial;background-position:initial;background-size:initial;background-repeat:initial;background-origin:initial;background-clip:initial;padding:0in 6pt;height:18.75pt">
+  <p class="MsoNormal" align="center" style="text-align:center;margin:0in 0in 0.0001pt;font-size:11pt;font-family:Calibri,sans-serif"><b>RATE</b></p>
+  </td>
+  <td width="111" valign="top" style="width:83.25pt;border-top:1pt solid black;border-left:none;border-bottom:3pt solid rgb(79,129,189);border-right:1pt solid black;background-image:initial;background-position:initial;background-size:initial;background-repeat:initial;background-origin:initial;background-clip:initial;padding:0in 6pt;height:18.75pt">
+  <p class="MsoNormal" align="center" style="text-align:center;margin:0in 0in 0.0001pt;font-size:11pt;font-family:Calibri,sans-serif"><b>CHARGE</b></p>
+  </td>
+ </tr>
+ <tr style="height:21pt">
+  <td valign="top" style="border-top:none;border-left:1pt solid black;border-bottom:1pt solid black;border-right:1pt solid rgb(79,129,189);background-image:initial;background-position:initial;background-size:initial;background-repeat:initial;background-origin:initial;background-clip:initial;padding:0in 6pt;height:21pt">
+  <p class="MsoNormal" align="center" style="text-align:center;margin:0in 0in 0.0001pt;font-size:11pt;font-family:Calibri,sans-serif">First 500 lbs</p>
+  </td>
+  <td valign="top" style="border-top:none;border-left:none;border-bottom:1pt solid black;border-right:1pt solid black;background:rgb(211,223,238);padding:0in 6pt;height:21pt"></td>
+  <td valign="top" style="border-top:none;border-left:none;border-bottom:1pt solid black;border-right:1pt solid black;background:rgb(211,223,238);padding:0in 6pt;height:21pt"></td>
+  <td valign="top" style="border-top:none;border-left:none;border-bottom:1pt solid black;border-right:1pt solid rgb(79,129,189);background:rgb(211,223,238);padding:0in 6pt;height:21pt">xDinamikFirst500LbsTxt</td>
+ </tr>
+ <tr style="height:20.25pt">
+  <td valign="top" style="border-top:none;border-left:1pt solid black;border-bottom:1pt solid black;border-right:1pt solid rgb(79,129,189);background-image:initial;background-position:initial;background-size:initial;background-repeat:initial;background-origin:initial;background-clip:initial;padding:0in 6pt;height:20.25pt">
+  <p class="MsoNormal" align="center" style="text-align:center;margin:0in 0in 0.0001pt;font-size:11pt;font-family:Calibri,sans-serif">Weight Charges</p>
+  </td>
+  <td valign="top" style="border-top:none;border-left:none;border-bottom:1pt solid black;border-right:1pt solid black;padding:0in 6pt;height:20.25pt">
+  <p class="MsoNormal" align="center" style="text-align:center;margin:0in 0in 0.0001pt;font-size:11pt;font-family:Calibri,sans-serif"><b>xDinamikBedRoomWeightForCalculation </b></p>
+  </td>
+  <td valign="top" style="border-top:none;border-left:none;border-bottom:1pt solid black;border-right:1pt solid black;padding:0in 6pt;height:20.25pt">
+  <p class="MsoNormal" style="margin:0in 0in 0.0001pt;font-size:11pt;font-family:Calibri,sans-serif">xDinamikWeightRateTxt</p>
+  </td>
+  <td valign="top" style="border-top:none;border-left:none;border-bottom:1pt solid black;border-right:1pt solid rgb(79,129,189);padding:0in 6pt;height:20.25pt">
+  <p class="MsoNormal" align="center" style="text-align:center;margin:0in 0in 0.0001pt;font-size:11pt;font-family:Calibri,sans-serif">$xDinamikWeightCharges.00</p>
+  </td>
+ </tr>
+ <tr style="height:20.25pt">
+  <td valign="top" style="border-top:none;border-left:1pt solid black;border-bottom:1pt solid black;border-right:1pt solid rgb(79,129,189);background-image:initial;background-position:initial;background-size:initial;background-repeat:initial;background-origin:initial;background-clip:initial;padding:0in 6pt;height:20.25pt">
+  <p class="MsoNormal" align="center" style="text-align:center;margin:0in 0in 0.0001pt;font-size:11pt;font-family:Calibri,sans-serif">Scale Fee</p>
+  </td>
+  <td valign="top" style="border-top:none;border-left:none;border-bottom:1pt solid black;border-right:1pt solid black;background:rgb(211,223,238);padding:0in 6pt;height:20.25pt">
+  <p class="MsoNormal" align="center" style="text-align:center;margin:0in 0in 0.0001pt;font-size:11pt;font-family:Calibri,sans-serif">Government Certified Scale</p>
+  </td>
+  <td valign="top" style="border-top:none;border-left:none;border-bottom:1pt solid black;border-right:1pt solid black;background:rgb(211,223,238);padding:0in 6pt;height:20.25pt">
+  <p class="MsoNormal" align="center" style="text-align:center;margin:0in 0in 0.0001pt;font-size:11pt;font-family:Calibri,sans-serif">Flat Rate</p>
+  </td>
+  <td valign="top" style="border-top:none;border-left:none;border-bottom:1pt solid black;border-right:1pt solid rgb(79,129,189);background:rgb(211,223,238);padding:0in 6pt;height:20.25pt">
+  <p class="MsoNormal" align="center" style="text-align:center;margin:0in 0in 0.0001pt;font-size:11pt;font-family:Calibri,sans-serif">$45.00</p>
+  </td>
+ </tr>
+ <tr style="height:20.25pt">
+  <td valign="top" style="border-top:none;border-left:1pt solid black;border-bottom:1pt solid black;border-right:1pt solid rgb(79,129,189);background-image:initial;background-position:initial;background-size:initial;background-repeat:initial;background-origin:initial;background-clip:initial;padding:0in 6pt;height:20.25pt">
+  <p class="MsoNormal" align="center" style="text-align:center;margin:0in 0in 0.0001pt;font-size:11pt;font-family:Calibri,sans-serif">Pick Up Surcharge</p>
+  </td>
+  <td valign="top" style="border-top:none;border-left:none;border-bottom:1pt solid black;border-right:1pt solid black;padding:0in 6pt;height:20.25pt"></td>
+  <td valign="top" style="border-top:none;border-left:none;border-bottom:1pt solid black;border-right:1pt solid black;padding:0in 6pt;height:20.25pt"></td>
+  <td valign="top" style="border-top:none;border-left:none;border-bottom:1pt solid black;border-right:1pt solid rgb(79,129,189);padding:0in 6pt;height:20.25pt">
+  <p class="MsoNormal" align="center" style="text-align:center;margin:0in 0in 0.0001pt;font-size:11pt;font-family:Calibri,sans-serif"><b>$xDinamikCityOriginSurcharge.00</b></p>
+  </td>
+ </tr>
+ <tr style="height:21pt">
+  <td valign="top" style="border-top:none;border-left:1pt solid black;border-bottom:1pt solid black;border-right:1pt solid rgb(79,129,189);background-image:initial;background-position:initial;background-size:initial;background-repeat:initial;background-origin:initial;background-clip:initial;padding:0in 6pt;height:21pt">
+  <p class="MsoNormal" align="center" style="text-align:center;margin:0in 0in 0.0001pt;font-size:11pt;font-family:Calibri,sans-serif">Delivery Surcharge</p>
+  </td>
+  <td valign="top" style="border-top:none;border-left:none;border-bottom:1pt solid black;border-right:1pt solid black;background:rgb(211,223,238);padding:0in 6pt;height:21pt"></td>
+  <td valign="top" style="border-top:none;border-left:none;border-bottom:1pt solid black;border-right:1pt solid black;background:rgb(211,223,238);padding:0in 6pt;height:21pt"></td>
+  <td valign="top" style="border-top:none;border-left:none;border-bottom:1pt solid black;border-right:1pt solid rgb(79,129,189);background:rgb(211,223,238);padding:0in 6pt;height:21pt">
+  <p class="MsoNormal" align="center" style="text-align:center;margin:0in 0in 0.0001pt;font-size:11pt;font-family:Calibri,sans-serif"><b>$xDinamikCityDestinationSurcharge.00</b></p>
+  </td>
+ </tr>
+ <tr style="height:20.25pt">
+  <td valign="top" style="border-top:none;border-left:1pt solid black;border-bottom:1pt solid black;border-right:1pt solid rgb(79,129,189);background-image:initial;background-position:initial;background-size:initial;background-repeat:initial;background-origin:initial;background-clip:initial;padding:0in 6pt;height:20.25pt">
+  <p class="MsoNormal" align="center" style="text-align:center;margin:0in 0in 0.0001pt;font-size:11pt;font-family:Calibri,sans-serif">Packing Charge</p>
+  </td>
+  <td valign="top" style="border-top:none;border-left:none;border-bottom:1pt solid black;border-right:1pt solid black;padding:0in 6pt;height:20.25pt">
+  <p class="MsoNormal" align="center" style="text-align:center;margin:0in 0in 0.0001pt;font-size:11pt;font-family:Calibri,sans-serif">Furniture Blanket Wrap</p>
+  </td>
+  <td valign="top" style="border-top:none;border-left:none;border-bottom:1pt solid black;border-right:1pt solid black;padding:0in 6pt;height:20.25pt"></td>
+  <td valign="top" style="border-top:none;border-left:none;border-bottom:1pt solid black;border-right:1pt solid rgb(79,129,189);padding:0in 6pt;height:20.25pt">
+  <p class="MsoNormal" align="center" style="text-align:center;margin:0in 0in 0.0001pt;font-size:11pt;font-family:Calibri,sans-serif"><b><span style="color:rgb(78,124,212)">FREE</span></b></p>
+  </td>
+ </tr>
+ <tr style="height:20.25pt">
+  <td valign="top" style="border-top:none;border-left:1pt solid black;border-bottom:1pt solid black;border-right:1pt solid rgb(79,129,189);background-image:initial;background-position:initial;background-size:initial;background-repeat:initial;background-origin:initial;background-clip:initial;padding:0in 6pt;height:20.25pt">
+  <p class="MsoNormal" align="center" style="text-align:center;margin:0in 0in 0.0001pt;font-size:11pt;font-family:Calibri,sans-serif">Vehicle Move</p>
+  </td>
+  <td valign="top" style="border-top:none;border-left:none;border-bottom:1pt solid black;border-right:1pt solid black;background:rgb(211,223,238);padding:0in 6pt;height:20.25pt"></td>
+  <td valign="top" style="border-top:none;border-left:none;border-bottom:1pt solid black;border-right:1pt solid black;background:rgb(211,223,238);padding:0in 6pt;height:20.25pt"></td>
+  <td valign="top" style="border-top:none;border-left:none;border-bottom:1pt solid black;border-right:1pt solid rgb(79,129,189);background:rgb(211,223,238);padding:0in 6pt;height:20.25pt">
+  <p class="MsoNormal" align="center" style="text-align:center;margin:0in 0in 0.0001pt;font-size:11pt;font-family:Calibri,sans-serif">N/A</p>
+  </td>
+ </tr>
+ <tr style="height:20.25pt">
+  <td valign="top" style="border-top:none;border-left:1pt solid black;border-bottom:1pt solid black;border-right:1pt solid rgb(79,129,189);background-image:initial;background-position:initial;background-size:initial;background-repeat:initial;background-origin:initial;background-clip:initial;padding:0in 6pt;height:20.25pt"></td>
+  <td valign="top" style="border-top:none;border-left:none;border-bottom:1pt solid black;border-right:1pt solid black;padding:0in 6pt;height:20.25pt">
+  <p class="MsoNormal" style="margin:0in 0in 0.0001pt;font-size:11pt;font-family:Calibri,sans-serif">    </p>
+  </td>
+  <td valign="top" style="border-top:none;border-left:none;border-bottom:1pt solid black;border-right:1pt solid black;padding:0in 6pt;height:20.25pt"></td>
+  <td valign="top" style="border-top:none;border-left:none;border-bottom:1pt solid black;border-right:1pt solid rgb(79,129,189);padding:0in 6pt;height:20.25pt">
+  <p class="MsoNormal" style="margin:0in 0in 0.0001pt;font-size:11pt;font-family:Calibri,sans-serif">         </p>
+  </td>
+ </tr>
+ <tr style="height:20.25pt">
+  <td valign="top" style="border-top:none;border-left:1pt solid black;border-bottom:1pt solid black;border-right:1pt solid rgb(79,129,189);background-image:initial;background-position:initial;background-size:initial;background-repeat:initial;background-origin:initial;background-clip:initial;padding:0in 6pt;height:20.25pt">
+  <p class="MsoNormal" align="center" style="text-align:center;margin:0in 0in 0.0001pt;font-size:11pt;font-family:Calibri,sans-serif">Total Amount</p>
+  </td>
+  <td valign="top" style="border-top:none;border-left:none;border-bottom:1pt solid black;border-right:1pt solid black;background:rgb(211,223,238);padding:0in 6pt;height:20.25pt">
+  <p class="MsoNormal" align="center" style="text-align:center;margin:0in 0in 0.0001pt;font-size:11pt;font-family:Calibri,sans-serif">All Inclusive Service Before Taxes</p>
+  </td>
+  <td valign="top" style="border-top:none;border-left:none;border-bottom:1pt solid black;border-right:1pt solid black;background:rgb(211,223,238);padding:0in 6pt;height:20.25pt"></td>
+  <td valign="top" style="border-top:none;border-left:none;border-bottom:1pt solid black;border-right:1pt solid rgb(79,129,189);background:rgb(211,223,238);padding:0in 6pt;height:20.25pt">
+  <p class="MsoNormal" align="center" style="text-align:center;margin:0in 0in 0.0001pt;font-size:11pt;font-family:Calibri,sans-serif"><b><span style="font-size:15pt">$xDinamikTotalAmount.00</span></b></p>
+  </td>
+ </tr>
+</tbody></table><p class="MsoNormal" style="text-align:justify;margin:0in 0in 0.0001pt;font-size:11pt;font-family:Calibri,sans-serif"><b><span lang="EN-CA" style="font-family:Arial,sans-serif;color:black">Please note the shipment will be weighed at the scale and the final
+charge will be based on the actual scaled weight. </span></b><b><span lang="EN-CA" style="font-size:11.5pt;font-family:Arial,sans-serif;color:black">I</span></b><b><span lang="EN-CA" style="font-family:Arial,sans-serif;color:black">f the weight turns out
+to be less than the estimated weight, charges will be adjusted to the lesser
+amount.</span></b><span lang="EN-CA" style="font-size:12pt;font-family:Arial,sans-serif;color:black"></span></p><p class="MsoNormal" style="text-align:justify;margin:0in 0in 0.0001pt;font-size:11pt;font-family:Calibri,sans-serif"><span lang="EN-CA" style="font-family:Arial,sans-serif;color:black"> </span></p><p class="MsoNormal" style="margin:0in 0in 0.0001pt;font-size:11pt;font-family:Calibri,sans-serif"><b><u><span lang="EN-CA" style="font-family:Arial,sans-serif;color:rgb(0,68,119)">HOW IS MY SHIPMENT WEIGHED?</span></u></b><span lang="EN-CA" style="font-family:Arial,sans-serif;color:black"></span></p><p class="MsoNormal" style="margin:0in 0in 0.0001pt;font-size:11pt;font-family:Calibri,sans-serif"><span lang="EN-CA" style="font-family:Arial,sans-serif;color:rgb(0,68,119)"> </span></p><p class="MsoNormal" style="margin:0in 0in 0.0001pt;font-size:11pt;font-family:Calibri,sans-serif"><span style="font-family:Arial,sans-serif">Once you
+schedule a move with us and prior to pick-up, the empty moving truck is weighed
+and then the truck is weighed again after your shipment is loaded. The
+difference between the two weights is your exact weight.</span></p><p class="MsoNormal" style="margin:0in 0in 0.0001pt;font-size:11pt;font-family:Calibri,sans-serif"><span lang="EN-CA" style="font-family:Arial,sans-serif;color:black"> </span></p><p class="MsoNormal" style="margin:0in 0in 0.0001pt;font-size:11pt;font-family:Calibri,sans-serif"><span lang="EN-CA" style="font-family:Arial,sans-serif;color:black">We use only </span><span lang="EN-CA" style="font-family:Arial,sans-serif;color:rgb(237,28,36)">GOVERNMENT
+CERTIFIED SCALES</span><span lang="EN-CA" style="font-family:Arial,sans-serif;color:black">, and a certified scale ticket will be
+provided by request.</span></p><p class="MsoNormal" style="margin:0in 0in 0.0001pt;font-size:11pt;font-family:Calibri,sans-serif"><span lang="EN-CA" style="font-family:Arial,sans-serif;color:black"> </span></p><p class="MsoNormal" style="margin:0in 0in 0.0001pt;font-size:11pt;font-family:Calibri,sans-serif"><b><u><span lang="EN-CA" style="font-family:Arial,sans-serif;color:rgb(0,68,119)">SUGGESTIONS FOR A SUCCESSFUL MOVE</span></u></b><span lang="EN-CA" style="font-family:Arial,sans-serif;color:black"></span></p><p class="MsoNormal" style="margin:0in 0in 0.0001pt;font-size:11pt;font-family:Calibri,sans-serif"><span lang="EN-CA" style="font-family:Arial,sans-serif;color:black"> </span></p><p class="MsoNormal" style="margin:0in 0in 0.0001pt;font-size:11pt;font-family:Calibri,sans-serif"><span lang="EN-CA" style="font-family:Arial,sans-serif;color:black">Help us to help you. We will be able to
+offer you a more accurate quote and better price if you e-mail us an inventory
+of the items being moved in advance. If it saves us time, it saves you money!!!</span></p><p class="MsoNormal" style="margin:0in 0in 0.0001pt;font-size:11pt;font-family:Calibri,sans-serif"><span lang="EN-CA" style="font-family:Arial,sans-serif;color:black">We
+will wrap your furniture with premium quality moving blankets for maximum
+protection (FREE). You will only need to pack your small items in boxes and
+don’t forget to use lots of paper/ballast for fragile items. We also offer
+packing services for an additional fee.</span></p><p class="MsoNormal" style="margin:0in 0in 0.0001pt;font-size:11pt;font-family:Calibri,sans-serif"><span lang="EN-CA" style="font-family:Arial,sans-serif;color:black"> </span></p><p class="MsoNormal" style="margin:0in 0in 0.0001pt;font-size:11pt;font-family:Calibri,sans-serif"><b><u><span lang="EN-CA" style="font-family:Arial,sans-serif;color:rgb(0,68,119)">OUR PRICE INCLUDES</span></u></b><span lang="EN-CA" style="font-family:Arial,sans-serif;color:black"></span></p><p class="MsoNormal" style="margin:0in 0in 0.0001pt;font-size:11pt;font-family:Calibri,sans-serif"><span lang="EN-CA" style="font-family:Arial,sans-serif;color:black"> </span></p><p class="MsoNormal" style="margin:0in 0in 0.0001pt;font-size:11pt;font-family:Calibri,sans-serif"><span lang="EN-CA" style="font-family:Arial,sans-serif;color:black">- A fuel surcharge</span></p><p class="MsoNormal" style="margin:0in 0in 0.0001pt;font-size:11pt;font-family:Calibri,sans-serif"><span lang="EN-CA" style="font-family:Arial,sans-serif;color:black">- Door to door service (Pick up, delivery
+and scale included in the quotation)</span></p><p class="MsoNormal" style="margin:0in 0in 0.0001pt;font-size:11pt;font-family:Calibri,sans-serif"><span lang="EN-CA" style="font-family:Arial,sans-serif;color:black">- Wrapping your goods in padded moving
+blankets for maximum protection</span></p><p class="MsoNormal" style="margin:0in 0in 0.0001pt;font-size:11pt;font-family:Calibri,sans-serif"><span lang="EN-CA" style="font-family:Arial,sans-serif;color:black">- Compiling an inventory list of your
+belongings noting the condition of items </span></p><p class="MsoNormal" style="margin:0in 0in 0.0001pt;font-size:11pt;font-family:Calibri,sans-serif"><span lang="EN-CA" style="font-family:Arial,sans-serif;color:black">- The labour needed to load items onto the
+truck and offload at delivery</span></p><p class="MsoNormal" style="margin:0in 0in 0.0001pt;font-size:11pt;font-family:Calibri,sans-serif"><span lang="EN-CA" style="font-family:Arial,sans-serif;color:black">- Placement of your belongings where
+requested</span></p><p class="MsoNormal" style="margin:0in 0in 0.0001pt;font-size:11pt;font-family:Calibri,sans-serif"><span lang="EN-CA" style="font-family:Arial,sans-serif;color:black"> </span></p><p class="MsoNormal" style="margin:0in 0in 0.0001pt;font-size:11pt;font-family:Calibri,sans-serif"><b><u><span lang="EN-CA" style="font-family:Arial,sans-serif;color:rgb(0,68,119)">IF YOU MAY NEED TO USE OUR STORAGE:</span></u></b><span lang="EN-CA" style="font-family:Arial,sans-serif;color:black"></span></p><p class="MsoNormal" style="margin:0in 0in 0.0001pt;font-size:11pt;font-family:Calibri,sans-serif"><span lang="EN-CA" style="font-family:Arial,sans-serif;color:black"> </span></p><p class="MsoNormal" style="margin:0in 0in 0.0001pt;font-size:11pt;font-family:Calibri,sans-serif"><span lang="EN-CA" style="font-family:Arial,sans-serif;color:black">Our new offer: <b><u><span style="background:yellow">30 DAYS of FREE STORAGE</span></u></b> &amp; </span><b><u><span lang="EN-CA" style="font-family:Arial,sans-serif;color:rgb(237,28,36)">FREE RE-DELIVERY</span></u></b><span lang="EN-CA" style="font-family:Arial,sans-serif;color:rgb(192,0,0)"> *</span></p><p class="MsoNormal" style="margin:0in 0in 0.0001pt;font-size:11pt;font-family:Calibri,sans-serif"><span lang="EN-CA" style="font-family:Arial,sans-serif;color:black">from storage to your final destination
+(Some conditions apply - please inquire)</span></p><p class="MsoNormal" style="margin:0in 0in 0.0001pt;font-size:11pt;font-family:Calibri,sans-serif"><span lang="EN-CA" style="font-family:Arial,sans-serif;color:black"> </span></p><p class="MsoNormal" style="margin:0in 0in 0.0001pt;font-size:11pt;font-family:Calibri,sans-serif"><i><span lang="EN-CA" style="color:black">* Discounts for seniors, students and persons with special needs may
+apply </span></i><span lang="EN-CA" style="font-family:Arial,sans-serif;color:black"></span></p><p class="MsoNormal" style="margin:0in 0in 0.0001pt;font-size:11pt;font-family:Calibri,sans-serif"><span lang="EN-CA" style="font-family:Arial,sans-serif;color:black"> </span></p><p class="MsoNormal" style="margin:0in 0in 12pt;font-size:11pt;font-family:Calibri,sans-serif"><span lang="EN-CA" style="font-family:Arial,sans-serif;color:black"> </span><b><span lang="EN-CA" style="font-family:Arial,sans-serif;color:rgb(0,68,119)">ABOUT VEGA LINE MOVING</span></b><span lang="EN-CA" style="font-family:Arial,sans-serif;color:black"></span></p><p class="MsoNormal" style="margin:0in 0in 0.0001pt;font-size:11pt;font-family:Calibri,sans-serif"><span lang="EN-CA" style="color:black">Vega
+Line is a provider of Local and Long Distance Moving Services across Canada and
+the USA. We are a West Coast Line and California Specialist.</span></p><p class="MsoNormal" style="margin:0in 0in 0.0001pt;font-size:11pt;font-family:Calibri,sans-serif"><span lang="EN-CA" style="font-family:Arial,sans-serif;color:black"> </span></p><p class="MsoNormal" style="margin:0in 0in 0.0001pt;font-size:11pt;font-family:Calibri,sans-serif"><span lang="EN-CA" style="font-family:Arial,sans-serif;color:black">We are licensed by:</span></p><p class="MsoNormal" style="margin:0in 0in 0.0001pt;font-size:11pt;font-family:Calibri,sans-serif"><span lang="EN-CA" style="font-family:Arial,sans-serif;color:black">- IFTA Carrier</span></p><p class="MsoNormal" style="margin:0in 0in 0.0001pt;font-size:11pt;font-family:Calibri,sans-serif"><span lang="EN-CA" style="font-family:Arial,sans-serif;color:black">- Bonded Carrier</span></p><p class="MsoNormal" style="margin:0in 0in 0.0001pt;font-size:11pt;font-family:Calibri,sans-serif"><span lang="EN-CA" style="font-family:Arial,sans-serif;color:black">- FMCSA Carrier</span></p><p class="MsoNormal" style="margin:0in 0in 0.0001pt;font-size:11pt;font-family:Calibri,sans-serif"><span lang="EN-CA" style="font-family:Arial,sans-serif;color:black"> </span></p><p class="MsoNormal" style="margin:0in 0in 0.0001pt;font-size:11pt;font-family:Calibri,sans-serif"><span lang="EN-CA" style="font-family:Arial,sans-serif;color:black">We are proud members of</span></p><p class="MsoNormal" style="margin:0in 0in 0.0001pt;font-size:11pt;font-family:Calibri,sans-serif"><span lang="EN-CA" style="font-family:Arial,sans-serif;color:black">- CFIB</span></p><p class="MsoNormal" style="margin:0in 0in 0.0001pt;font-size:11pt;font-family:Calibri,sans-serif"><span lang="EN-CA" style="font-family:Arial,sans-serif;color:black">- Richmond Chamber of Commerce</span></p><p class="MsoNormal" style="margin:0in 0in 0.0001pt;font-size:11pt;font-family:Calibri,sans-serif"><span lang="EN-CA" style="font-family:Arial,sans-serif;color:black"><br>
+We offer competitive pricing and professional service. Should you have any
+questions or concerns or would like to inquire further about our services and
+prices in regards to your upcoming move, please do not hesitate to contact
+us. We are available by phone Monday through to Saturday at 1-800-908-VEGA
+(8342), and by email at </span><a href="mailto:info@vegalinemoving.com" style="color:rgb(5,99,193)"><b><span lang="EN-CA" style="font-family:Arial,sans-serif;color:rgb(0,68,119)">info@vegalinemoving.com</span></b></a><span lang="EN-CA" style="font-family:Arial,sans-serif;color:black">.</span><span lang="EN-CA" style="font-size:10pt;font-family:Arial,sans-serif;color:black"> </span><span lang="EN-CA" style="font-family:Arial,sans-serif;color:black">Also, check out our website for extra tips
+to assist you with your move </span><a href="http://www.vegalinemoving.com/" style="color:rgb(5,99,193)"><b><span lang="EN-CA" style="font-family:Arial,sans-serif;color:rgb(0,68,119)">www.vegalinemoving.com</span></b></a><span lang="EN-CA" style="font-family:Arial,sans-serif;color:black">.</span></p><p class="MsoNormal" align="center" style="text-align:center;margin:0in 0in 0.0001pt;font-size:11pt;font-family:Calibri,sans-serif"><span lang="EN-CA" style="color:black"> </span></p><p class="MsoNormal" style="margin:0in 0in 0.0001pt;font-size:11pt;font-family:Calibri,sans-serif"><span lang="EN-CA" style="font-family:Arial,sans-serif;color:black">Thank you for considering us your moving
+company. We look forward to hearing from you!</span></p><p class="MsoNormal" style="margin:0in 0in 0.0001pt;font-size:11pt;font-family:Calibri,sans-serif"><span lang="EN-CA" style="font-family:Arial,sans-serif;color:black"> </span></p><p class="MsoNormal" style="margin:0in 0in 0.0001pt;font-size:11pt;font-family:Calibri,sans-serif"><span lang="EN-CA" style="font-family:Arial,sans-serif;color:black">Kind regards,</span></p><p class="MsoNormal" style="margin:0in 0in 0.0001pt;font-size:11pt;font-family:Calibri,sans-serif"><span lang="EN-CA" style="font-family:Arial,sans-serif;color:black"> </span></p><p class="MsoNormal" style="margin:0in 0in 0.0001pt;font-size:11pt;font-family:Calibri,sans-serif"><span lang="EN-CA" style="font-family:Arial,sans-serif;color:black">Mark Romano</span></p><p class="MsoNormal" style="margin:0in 0in 0.0001pt;font-size:11pt;font-family:Calibri,sans-serif"><span lang="EN-CA" style="font-family:Arial,sans-serif;color:black">Relocation Consultant</span></p><table class="gmail-MsoNormalTable" border="0" cellspacing="0" cellpadding="0" style="border-collapse:collapse">
+ <tbody><tr style="height:12.1pt">
+  <td valign="top" style="padding:0.75pt;height:12.1pt">
+  <p class="MsoNormal" style="line-height:105%;margin:0in 0in 0.0001pt;font-size:11pt;font-family:Calibri,sans-serif"><span style="font-family:Arial,sans-serif;color:rgb(83,129,53)">p:</span></p>
+  </td>
+  <td valign="top" style="padding:0.75pt;height:12.1pt">
+  <p class="MsoNormal" style="line-height:105%;margin:0in 0in 0.0001pt;font-size:11pt;font-family:Calibri,sans-serif"><span style="font-family:Arial,sans-serif;color:rgb(51,51,51)">1-844 900 8342</span><span style="font-family:Arial,sans-serif"></span></p>
+  </td>
+ </tr>
+ <tr style="height:12.1pt">
+  <td valign="top" style="padding:0.75pt;height:12.1pt">
+  <p class="MsoNormal" style="line-height:105%;margin:0in 0in 0.0001pt;font-size:11pt;font-family:Calibri,sans-serif"><span style="font-family:Arial,sans-serif;color:rgb(83,129,53)">w:</span></p>
+  </td>
+  <td valign="top" style="padding:0.75pt;height:12.1pt">
+  <p class="MsoNormal" style="line-height:105%;margin:0in 0in 0.0001pt;font-size:11pt;font-family:Calibri,sans-serif"><u><span style="font-family:Arial,sans-serif;color:rgb(17,85,204)"><a href="http://vegalinemoving.com">vegalinemoving.com</a></span></u><span style="font-family:Arial,sans-serif"></span></p>
+  </td>
+ </tr>
+ <tr style="height:12.1pt">
+  <td valign="top" style="padding:0.75pt;height:12.1pt">
+  <p class="MsoNormal" style="line-height:105%;margin:0in 0in 0.0001pt;font-size:11pt;font-family:Calibri,sans-serif"><span style="font-family:Arial,sans-serif;color:rgb(83,129,53)">e:</span></p>
+  </td>
+  <td valign="top" style="padding:0.75pt;height:12.1pt">
+  <p class="MsoNormal" style="line-height:105%;margin:0in 0in 0.0001pt;font-size:11pt;font-family:Calibri,sans-serif"><a href="mailto:info@vegalinemoving.com" style="color:rgb(5,99,193)"><span style="font-family:Arial,sans-serif;color:blue">info@vegalinemoving.com</span></a><span style="font-family:Arial,sans-serif"></span></p>
+  </td>
+ </tr>
+</tbody></table><a href="https://imgbb.com/"><img src="https://i.ibb.co/4pwLJJ3/vegaline.png" alt="vegaline" border="0" /></a><p class="MsoNormal" style="margin:0in 0in 0.0001pt;font-size:11pt;font-family:Calibri,sans-serif"> </p><table class="gmail-MsoNormalTable" border="0" cellpadding="0">
+ <tbody><tr>
+  <td style="padding:3.75pt">
+  <p class="MsoNormal" style="margin:0in 0in 0.0001pt;font-size:11pt;font-family:Calibri,sans-serif"><strong>Move
+  Date:</strong> </p>
+  </td>
+  <td style="padding:3.75pt">
+  <p class="MsoNormal" style="margin:0in 0in 0.0001pt;font-size:11pt;font-family:Calibri,sans-serif">xDinamikMoveDate</p>
+  </td>
+ </tr>
+ <tr>
+  <td style="padding:3.75pt">
+  <p class="MsoNormal" style="margin:0in 0in 0.0001pt;font-size:11pt;font-family:Calibri,sans-serif"><strong>Type
+  of Move:</strong> </p>
+  </td>
+  <td style="padding:3.75pt">
+  <p class="MsoNormal" style="margin:0in 0in 0.0001pt;font-size:11pt;font-family:Calibri,sans-serif">xDinamikTypeOfMove</p>
+  </td>
+ </tr>
+ <tr>
+  <td style="padding:3.75pt">
+  <p class="MsoNormal" style="margin:0in 0in 0.0001pt;font-size:11pt;font-family:Calibri,sans-serif"><strong>Move
+  Size:</strong> </p>
+  </td>
+  <td style="padding:3.75pt">
+  <p class="MsoNormal" style="margin:0in 0in 0.0001pt;font-size:11pt;font-family:Calibri,sans-serif">xDinamikMoveSize</p>
+  </td>
+ </tr>
+ <tr>
+  <td style="padding:3.75pt">
+  <p class="MsoNormal" style="margin:0in 0in 0.0001pt;font-size:11pt;font-family:Calibri,sans-serif"><strong>Quote
+  hauling vehicle?</strong> </p>
+  </td>
+  <td style="padding:3.75pt">
+  <p class="MsoNormal" style="margin:0in 0in 0.0001pt;font-size:11pt;font-family:Calibri,sans-serif">xDinamikQuoteHaulingVehicle</p>
+  </td>
+ </tr>
+ <tr>
+  <td style="padding:3.75pt">
+  <p class="MsoNormal" style="margin:0in 0in 0.0001pt;font-size:11pt;font-family:Calibri,sans-serif"><strong>Origin:</strong>
+  </p>
+  </td>
+  <td style="padding:3.75pt">
+  <p class="MsoNormal" style="margin:0in 0in 0.0001pt;font-size:11pt;font-family:Calibri,sans-serif">xDinamikOrigin</p>
+  </td>
+ </tr>
+ <tr>
+  <td style="padding:3.75pt">
+  <p class="MsoNormal" style="margin:0in 0in 0.0001pt;font-size:11pt;font-family:Calibri,sans-serif"><strong>Destination:</strong>
+  </p>
+  </td>
+  <td style="padding:3.75pt">
+  <p class="MsoNormal" style="margin:0in 0in 0.0001pt;font-size:11pt;font-family:Calibri,sans-serif">xDinamikDestination</p>
+  </td>
+ </tr>
+ <tr>
+  <td colspan="2" style="background:rgb(238,238,238);padding:3.75pt">
+  <p class="MsoNormal" style="margin:0in 0in 0.0001pt;font-size:11pt;font-family:Calibri,sans-serif"><strong>CONTACT
+  DETAILS</strong></p>
+  </td>
+ </tr>
+ <tr>
+  <td style="padding:3.75pt">
+  <p class="MsoNormal" style="margin:0in 0in 0.0001pt;font-size:11pt;font-family:Calibri,sans-serif"><strong>First
+  Name:</strong> </p>
+  </td>
+  <td style="padding:3.75pt">
+  <p class="MsoNormal" style="margin:0in 0in 0.0001pt;font-size:11pt;font-family:Calibri,sans-serif">xDinamikFirstName</p>
+  </td>
+ </tr>
+ <tr>
+  <td style="padding:3.75pt">
+  <p class="MsoNormal" style="margin:0in 0in 0.0001pt;font-size:11pt;font-family:Calibri,sans-serif"><strong>Last
+  Name:</strong> </p>
+  </td>
+  <td style="padding:3.75pt">
+  <p class="MsoNormal" style="margin:0in 0in 0.0001pt;font-size:11pt;font-family:Calibri,sans-serif">xDinamikLastName</p>
+  </td>
+ </tr>
+ <tr>
+  <td style="padding:3.75pt">
+  <p class="MsoNormal" style="margin:0in 0in 0.0001pt;font-size:11pt;font-family:Calibri,sans-serif"><strong>Phone:</strong>
+  </p>
+  </td>
+  <td style="padding:3.75pt">
+  <p class="MsoNormal" style="margin:0in 0in 0.0001pt;font-size:11pt;font-family:Calibri,sans-serif">xDinamikPhone</p>
+  </td>
+ </tr>
+ <tr>
+  <td style="padding:3.75pt">
+  <p class="MsoNormal" style="margin:0in 0in 0.0001pt;font-size:11pt;font-family:Calibri,sans-serif"><strong>Phone2:</strong>
+  </p>
+  </td>
+  <td style="padding:3.75pt">
+  <p class="MsoNormal" style="margin:0in 0in 0.0001pt;font-size:11pt;font-family:Calibri,sans-serif">xDinamikPhone2</p>
+  </td>
+ </tr>
+ <tr>
+  <td style="padding:3.75pt">
+  <p class="MsoNormal" style="margin:0in 0in 0.0001pt;font-size:11pt;font-family:Calibri,sans-serif"><strong>Email
+  Address:</strong> </p>
+  </td>
+  <td style="padding:3.75pt">
+  <p class="MsoNormal" style="margin:0in 0in 0.0001pt;font-size:11pt;font-family:Calibri,sans-serif"><a href="mailto:xDinamikEmailAddress" style="color:rgb(5,99,193)">xDinamikEmailAddress</a></p>
+  </td>
+ </tr>
+ <tr>
+  <td style="padding:3.75pt">
+  <p class="MsoNormal" style="margin:0in 0in 0.0001pt;font-size:11pt;font-family:Calibri,sans-serif"><strong>Contact
+  Preference:</strong> </p>
+  </td>
+  <td style="padding:3.75pt">
+  <p class="MsoNormal" style="margin:0in 0in 0.0001pt;font-size:11pt;font-family:Calibri,sans-serif">xDinamikContactPreferences</p>
+  </td>
+ </tr>
+</tbody></table><p class="MsoNormal" style="margin:0in 0in 0.0001pt;font-size:11pt;font-family:Calibri,sans-serif"> </p><p class="MsoNormal" style="margin:0in 0in 0.0001pt;font-size:11pt;font-family:Calibri,sans-serif">
+
+
+</p><p class="MsoNormal" style="margin:0in 0in 0.0001pt;font-size:11pt;font-family:Calibri,sans-serif"> </p><p class="MsoNormal" style="margin:0in 0in 0.0001pt;font-size:11pt;font-family:Calibri,sans-serif"><br></p></div></div>
+
+</body>
+</html>
+`;
+
+
+</script>
+
+
+<style>
+	div.editable {
+		width: 400px;
+		height: 500px;
+		border: 2px solid black;
+		padding: 5px;
+	}
+
+	div.generatedEditable {
+		width: 1600px;
+		height: 2200px;
+		border: 2px solid black;
+		padding: 5px;
+		
+	}
+
+</style>
